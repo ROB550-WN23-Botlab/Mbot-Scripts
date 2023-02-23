@@ -10,7 +10,7 @@ if nmcli connection show --active | grep -q "$ap_name"; then
 fi
 
 # Check if any known networks are available
-known_networks=$(nmcli device wifi list | grep -v "^*")
+known_networks=$(nmcli connection show | grep -E "^(\*|s+NAME)" | awk '{print $2}' | grep -v "bridge" | grep -v "ap")
 if [[ -n "$known_networks" ]]; then
     echo "Known networks are available, not starting access point"
     exit 0
