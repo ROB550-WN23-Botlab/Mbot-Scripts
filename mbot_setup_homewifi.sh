@@ -1,5 +1,5 @@
-MyWifi = "MyWifi"
-MyWifiPassword = "MyWifiPassword"
+MyWifi="MyWifi"
+MyWifiPassword="MyWifiPassword"
 
 sudo nmcli connection add type wifi ifname wlan0 con-name $MyWifi autoconnect yes ssid $MyWifi
 sudo nmcli connection modify $MyWifi wifi-sec.key-mgmt wpa-psk
