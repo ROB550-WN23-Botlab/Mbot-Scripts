@@ -14,6 +14,7 @@ else
 hostname="$1"
 
 #### Set hostname, timezone and keyboard ####
+hostnamectl set-hostname $hostname
 sed -i "s/raspberrypi/$hostname/g" /etc/hostname
 sed -i "s/raspberrypi/$hostname/g" /etc/hosts
 bash -c "echo America/Detroit > /etc/timezone"
