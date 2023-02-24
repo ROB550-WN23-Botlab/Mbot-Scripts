@@ -8,25 +8,30 @@ config_file = "/boot/firmware/mbot_config.txt"
 with open(config_file, "r") as f:
     lines = f.readlines()
     for line in lines:
-        print(line)
         key, value = line.strip().split("=")
         if key == "mbot_hostname":
             hostname = value
-            print(value)
         elif key == "mbot_ap_ssid":
             ssid = value
-            print(value)
         elif key == "mbot_ap_password":
             password = value
-            print(value)
         elif key == "home_wifi_ssid":
             home_wifi_ssid = value
-            print(value)
         elif key == "home_wifi_password":
             home_wifi_password = value
-            print(value)
 
-# Check if there is an active WiFi connection
+# Set hostname immediately
+os.system(f"hostnamectl set-hostname {hostname}")
+# Set the hostname in /etc/hostname
+with open("/etc/hostname", "w") as f:
+    f.write(hostname)
+# Change the hostname in /etc/hosts
+with open("/etc/hosts", "r") as f:
+    filedata = f.read()
+    filedata = filedata.replace(os.uname()[1], hostname)
+with open("/etc/hosts", "w") as f:
+    f.write(filedata)
+
 # Check if there is an active WiFi connection
 wifi_active = False
 wifi_status = os.popen("nmcli -t -f NAME,DEVICE,STATE c show --active").read().strip()
@@ -54,18 +59,7 @@ else:
         os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
         print("Connected to home WiFi network.")
     else:
-        # Set the hostname in /etc/hostname
-        with open("/etc/hostname", "w") as f:
-            f.write(hostname)
 
-        # Change the hostname in /etc/hosts
-        with open("/etc/hosts", "r") as f:
-            filedata = f.read()
-
-        filedata = filedata.replace(os.uname()[1], hostname)
-
-        with open("/etc/hosts", "w") as f:
-            f.write(filedata)
 
         # Check if the access point already exists
         ap_exists = False
