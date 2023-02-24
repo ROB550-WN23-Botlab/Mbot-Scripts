@@ -10,13 +10,13 @@ with open(config_file, "r") as f:
     for line in lines:
         print(line)
         key, value = line.strip().split("=")
-        if key == "hostname":
+        if key == "mbot_hostname":
             hostname = value
             print(value)
-        elif key == "ssid":
+        elif key == "mbot_ap_ssid":
             ssid = value
             print(value)
-        elif key == "password":
+        elif key == "mbot_ap_password":
             password = value
             print(value)
         elif key == "home_wifi_ssid":
