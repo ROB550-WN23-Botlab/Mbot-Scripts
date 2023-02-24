@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import os
 
 # Define the path to the config file
@@ -7,17 +8,23 @@ config_file = "/boot/firmware/mbot_config.txt"
 with open(config_file, "r") as f:
     lines = f.readlines()
     for line in lines:
+        print(line)
         key, value = line.strip().split("=")
         if key == "hostname":
             hostname = value
+            print(value)
         elif key == "ssid":
             ssid = value
+            print(value)
         elif key == "password":
             password = value
+            print(value)
         elif key == "home_wifi_ssid":
             home_wifi_ssid = value
+            print(value)
         elif key == "home_wifi_password":
             home_wifi_password = value
+            print(value)
 
 # Check if there is an active WiFi connection
 wifi_status = os.popen("nmcli -t -f device,state dev wlan0").read().split(":")[1].strip()
