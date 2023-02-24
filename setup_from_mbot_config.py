@@ -44,23 +44,28 @@ if wifi_status:
 
 if wifi_active:
     # Already connected to  WiFi network
-    print("Connected to a WiFi network.")
+    print("Connected to a WiFi network... Done.")
 else:
-    # Set up alternative WiFi connection
-    home_wifi_exists = False
-    for line in os.popen("nmcli connection show").readlines():
-        print(line)
-        if home_wifi_ssid in line:
-            home_wifi_exists = True
-            break
+    available_networks = []
+    scan_output = os.popen("sudo nmcli dev wifi list").read().split('\n')
+    for line in scan_output:
+        if len(line.strip()) > 0 and not line.startswith("IN-USE"):
+            available_networks.append(line.strip().split()[0])
+
+    if home_wifi_ssid in available_networks:
+        # Set up home WiFi connection
+        home_wifi_exists = False
+        for line in os.popen("nmcli connection show").readlines():
+            print(line)
+            if home_wifi_ssid in line:
+                home_wifi_exists = True
+                break
 
     if home_wifi_exists:
         # Connect to home WiFi network
         os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
         print("Connected to home WiFi network.")
     else:
-
-
         # Check if the access point already exists
         ap_exists = False
         for line in os.popen("nmcli connection show").readlines():
@@ -72,9 +77,8 @@ else:
             # Configure Network Manager to create a WiFi access point
             os.system("sudo nmcli radio wifi off")
             os.system("sudo nmcli connection add type wifi ifname wlan0 con-name mbot_wifi ssid {ssid}")
-            os.system(f"sudo nmcli connection modify mbot_wifi wifi.mode ap wifi.security.key-mgmt wpa-psk wifi.secur‌​ity-psk {password}")
+            os.system(f"sudo nmcli connection modify mbot_wifi 802-11-wireless.mode ap 802-11-wireless-security.key-mgmt wpa-psk 802-11-wireless-security.psk {password}")            
             os.system("sudo nmcli connection up mbot_wifi")
-
             print("Access point created successfully.")
         else:
             print("Access point already exists, not created.")
