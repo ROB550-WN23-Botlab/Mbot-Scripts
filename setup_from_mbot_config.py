@@ -27,15 +27,24 @@ with open(config_file, "r") as f:
             print(value)
 
 # Check if there is an active WiFi connection
-wifi_status = os.popen("nmcli -t -f device,state dev wlan0").read().split(":")[1].strip()
+# Check if there is an active WiFi connection
+wifi_active = False
+wifi_status = os.popen("nmcli -t -f NAME,DEVICE,STATE c show --active").read().strip()
+if wifi_status:
+    for line in wifi_status.split('\n'):
+        name, device, state = line.split(':')
+        if device == 'wlan0' and state == 'activated':
+            wifi_active = True
+            break
 
-if wifi_status == "connected":
-    # Already connected to home WiFi network
-    print("Connected to home WiFi network.")
+if wifi_active:
+    # Already connected to  WiFi network
+    print("Connected to a WiFi network.")
 else:
-    # Set up home WiFi connection
+    # Set up alternative WiFi connection
     home_wifi_exists = False
     for line in os.popen("nmcli connection show").readlines():
+        print(line)
         if home_wifi_ssid in line:
             home_wifi_exists = True
             break
