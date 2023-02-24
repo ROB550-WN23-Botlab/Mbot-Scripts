@@ -51,10 +51,10 @@ else:
     for line in scan_output:
         if len(line.strip()) > 0 and not line.startswith("IN-USE"):
             available_networks.append(line.strip().split()[0])
-
+            print(line.strip().split()[0])
+    home_wifi_exists = False
     if home_wifi_ssid in available_networks:
-        # Set up home WiFi connection
-        home_wifi_exists = False
+        # Set up home WiFi connection  
         for line in os.popen("nmcli connection show").readlines():
             print(line)
             if home_wifi_ssid in line:
