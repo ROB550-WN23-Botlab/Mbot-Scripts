@@ -22,7 +22,7 @@ with open(config_file, "r") as f:
 # Check if there is an active WiFi connection
 wifi_status = os.popen("nmcli -t -f device,state dev wlan0").read().split(":")[1].strip()
 
-if wifi_status == "connected"
+if wifi_status == "connected":
     # Already connected to home WiFi network
     print("Connected to home WiFi network.")
 else:
