@@ -89,6 +89,6 @@ with open(log_file, "a") as log:
             os.system("sudo nmcli connection modify mbot_wifi_ap ipv4.address 192.168.1.1/24 ipv4.dns '8.8.8.8 8.8.4.4'")
             time.sleep(10.0)
             os.system("sudo nmcli connection up mbot_wifi_ap")
-            print("Access point created successfully.")
+            log.write("Access point created successfully.")
         else:
-            print("Access point already exists, not created.")
+            log.write("Access point already exists, not created.")
