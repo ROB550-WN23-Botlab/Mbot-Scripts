@@ -70,23 +70,25 @@ with open(log_file, "a") as log:
         log.write("\n")
         
         home_wifi_exists = False
+        log.write(f"Looking for home network '{home_wifi_ssid}'\n")
         if home_wifi_ssid in available_networks:
-            # Set up home WiFi connection  
+            # Check if we've already added the home network 
             for line in os.popen("nmcli connection show").readlines():
                 log.write(line)
                 if home_wifi_ssid in line:
                     home_wifi_exists = True
-
         if home_wifi_exists:
             # Connect to home WiFi network
             os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
             log.write(f"Connected to WiFi network '{home_wifi_ssid}'. Done.\n")
         else:
+            log.write("No networks found, starting Access Point\n")
             # Check if the access point already exists
             ap_exists = False
             for line in os.popen("nmcli connection show").readlines():
                 if "mbot_wifi_ap" in line:
                     ap_exists = True
+                    log.write("Access point already exists, not created. \n")
                     break
 
         if not ap_exists:
@@ -95,8 +97,11 @@ with open(log_file, "a") as log:
             os.system("sudo nmcli connection modify mbot_wifi_ap 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared")
             os.system(f"sudo nmcli connection modify mbot_wifi_ap wifi-sec.key-mgmt wpa-psk wifi-sec.psk {ap_password}")
             os.system("sudo nmcli connection modify mbot_wifi_ap ipv4.address 192.168.1.1/24 ipv4.dns '8.8.8.8 8.8.4.4'")
+            log.write("Access point created successfully. \n")
             time.sleep(10.0)
             os.system("sudo nmcli connection up mbot_wifi_ap")
-            log.write("Access point created successfully. \n")
+            log.write("Access point started successfully. \n")
+            
         else:
-            log.write("Access point already exists, not created. \n")
+             os.system("sudo nmcli connection up mbot_wifi_ap")
+             log.write("Access point started successfully. \n")
