@@ -75,7 +75,6 @@ with open(log_file, "a") as log:
             # Connect to home WiFi network
             os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
             log.write(f"Connected to WiFi network '{home_wifi_ssid}'. Done.\n")
-            break
         else:
             # Check if the access point already exists
             ap_exists = False
