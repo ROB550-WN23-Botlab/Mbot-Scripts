@@ -74,9 +74,10 @@ with open(log_file, "a") as log:
         if home_wifi_ssid in available_networks:
             # Check if we've already added the home network 
             for line in os.popen("nmcli connection show").readlines():
-                log.write(line)
+                log.write(f"{line}, ")
                 if home_wifi_ssid in line:
                     home_wifi_exists = True
+            log.write("\n")
         if home_wifi_exists:
             # Connect to home WiFi network
             os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
