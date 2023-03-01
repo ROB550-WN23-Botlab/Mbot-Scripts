@@ -11,9 +11,9 @@ log_file = "/var/log/mbot_config.log"
 with open(log_file, "a") as log:
     current_time = datetime.datetime.now()
     formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
-    log.write("\n")
+    log.write("===== ")
     log.write(formatted_time)
-    log.write("\n")
+    log.write(" =====\n")
     # Read the config file and store the values in variables
     with open(config_file, "r") as f:
         lines = f.readlines()
@@ -64,7 +64,7 @@ with open(log_file, "a") as log:
         for line in scan_output:
             if len(line.strip()) > 0 and not line.startswith("IN-USE"):
                 ssid = line.strip().split()[1]
-                if ssid not in availabe_networks:
+                if ssid not in available_networks:
                     available_networks.append(ssid)
         log.write(available_networks)
         
