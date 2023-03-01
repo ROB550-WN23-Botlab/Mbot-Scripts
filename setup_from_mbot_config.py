@@ -60,6 +60,7 @@ with open(log_file, "a") as log:
     else:
         # We don't have a wifi network, check for ones we know
         available_networks = []
+        log.write(f"Looking for home network '{home_wifi_ssid}'\n")
         log.write("Wifi Scan: ")
         scan_output = os.popen("sudo nmcli dev wifi list").read().split('\n')
         for line in scan_output:
@@ -71,7 +72,6 @@ with open(log_file, "a") as log:
         log.write("\n")
         
         home_wifi_exists = False
-        log.write(f"Looking for home network '{home_wifi_ssid}'\n")
         if home_wifi_ssid in available_networks:
             # Check if we've already added the home network 
             for line in os.popen("nmcli connection show").readlines():
