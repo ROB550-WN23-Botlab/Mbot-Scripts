@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import os
 import time
+import datetime 
 # Define the path to the config file
 config_file = "/boot/firmware/mbot_config.txt"
 
@@ -8,7 +9,11 @@ config_file = "/boot/firmware/mbot_config.txt"
 log_file = "/var/log/mbot_config.log"
 
 with open(log_file, "a") as log:
-    log.write(f"'{time.date()}'\n")
+    current_time = datetime.datetime.now()
+    formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+    log.write("\n")
+    log.write(formatted_time)
+    log.write("\n")
     # Read the config file and store the values in variables
     with open(config_file, "r") as f:
         lines = f.readlines()
