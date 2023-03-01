@@ -13,7 +13,7 @@ apt-get -y install build-essential wget dkms \
     autoconf automake autotools-dev gdb libglib2.0-dev libgtk2.0-dev \
     libusb-dev libusb-1.0-0-dev freeglut3-dev libboost-dev libatlas-base-dev \
     libgsl-dev libjpeg-dev default-jdk doxygen openssl libssl-dev libdc1394-dev \
-    libcamera-dev v4l-utils
+    libcamera-dev v4l-utils minicom
 
 apt-get -y install mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
 
