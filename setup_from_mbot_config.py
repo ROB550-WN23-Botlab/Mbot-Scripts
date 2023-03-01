@@ -87,15 +87,12 @@ with open(log_file, "a") as log:
             
         else:
             log.write("No networks found, starting Access Point\n")
-            # Check if the access point already exists
-            ap_exists = False
+            # Check if the access point already exists to delete, otherwise hostname may be wrong
             for line in os.popen("nmcli connection show").readlines():
                 if "mbot_wifi_ap" in line:
-                    ap_exists = True
-                    log.write("Access point already exists, not created. \n")
+                    log.write("Access point already exists, removing... \n")
+                    os.system(f"nmcli connection delete mbot_wifi_ap")
                     break
-
-        if not ap_exists:
             # Configure Network Manager to create a WiFi access point
             os.system(f"sudo nmcli connection add type wifi ifname '*' con-name mbot_wifi_ap autoconnect no ssid {ap_ssid}")
             os.system("sudo nmcli connection modify mbot_wifi_ap 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared")
@@ -105,7 +102,3 @@ with open(log_file, "a") as log:
             time.sleep(10.0)
             os.system("sudo nmcli connection up mbot_wifi_ap")
             log.write("Access point started successfully. \n")
-            
-        else:
-             os.system("sudo nmcli connection up mbot_wifi_ap")
-             log.write("Access point started successfully. \n")
