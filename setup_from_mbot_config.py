@@ -82,7 +82,9 @@ with open(log_file, "a") as log:
         if home_wifi_exists:
             # Connect to home WiFi network
             os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
+            os.system("/home/pi/Installers/update_IP.sh")
             log.write(f"Started connection to WiFi network '{home_wifi_ssid}'. Done.\n")
+            
         else:
             log.write("No networks found, starting Access Point\n")
             # Check if the access point already exists
