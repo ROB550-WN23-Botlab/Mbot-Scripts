@@ -8,7 +8,7 @@ config_file = "/boot/firmware/mbot_config.txt"
 log_file = "/var/log/mbot_config.log"
 
 with open(log_file, "a") as log:
-    
+    log.write(f"'{time.date()}'\n")
     # Read the config file and store the values in variables
     with open(config_file, "r") as f:
         lines = f.readlines()
@@ -67,10 +67,9 @@ with open(log_file, "a") as log:
         if home_wifi_ssid in available_networks:
             # Set up home WiFi connection  
             for line in os.popen("nmcli connection show").readlines():
-                print(line)
+                log.write(line)
                 if home_wifi_ssid in line:
                     home_wifi_exists = True
-                    break
 
         if home_wifi_exists:
             # Connect to home WiFi network
