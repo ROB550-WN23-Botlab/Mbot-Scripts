@@ -59,14 +59,15 @@ with open(log_file, "a") as log:
     else:
         # We don't have a wifi network, check for ones we know
         available_networks = []
-        known_networks = []
+        log.write("Wifi Scan: ")
         scan_output = os.popen("sudo nmcli dev wifi list").read().split('\n')
         for line in scan_output:
             if len(line.strip()) > 0 and not line.startswith("IN-USE"):
                 ssid = line.strip().split()[1]
                 if ssid not in available_networks:
                     available_networks.append(ssid)
-                    log.write(ssid)
+                    log.write(f"{ssid}, ")
+        log.write("\n")
         
         home_wifi_exists = False
         if home_wifi_ssid in available_networks:
