@@ -36,7 +36,7 @@ with open(log_file, "a") as log:
         filedata = filedata.replace(os.uname()[1], hostname)
     with open("/etc/hosts", "w") as f:
         f.write(filedata)
-    log.write(f"hostname set to '{hostname}'")
+    log.write(f"hostname set to '{hostname}'\n")
 
     # Check if there is an active WiFi connection
     wifi_active = False
@@ -50,7 +50,7 @@ with open(log_file, "a") as log:
 
     if wifi_active:
         # Already connected to  WiFi network
-        log.write("Connected to a WiFi network... Done.")
+        log.write("Connected to a WiFi network... Done.\n")
     else:
         available_networks = []
         known_networks = []
@@ -72,7 +72,7 @@ with open(log_file, "a") as log:
         if home_wifi_exists:
             # Connect to home WiFi network
             os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
-            log.write(f"Connected to home WiFi network '{home_wifi_ssid}'")
+            log.write(f"Connected to home WiFi network '{home_wifi_ssid}' \n")
         else:
             # Check if the access point already exists
             ap_exists = False
@@ -89,6 +89,6 @@ with open(log_file, "a") as log:
             os.system("sudo nmcli connection modify mbot_wifi_ap ipv4.address 192.168.1.1/24 ipv4.dns '8.8.8.8 8.8.4.4'")
             time.sleep(10.0)
             os.system("sudo nmcli connection up mbot_wifi_ap")
-            log.write("Access point created successfully.")
+            log.write("Access point created successfully. \n")
         else:
-            log.write("Access point already exists, not created.")
+            log.write("Access point already exists, not created. \n")
