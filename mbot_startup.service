@@ -1,0 +1,13 @@
+[Unit]
+Description=Setup MBot Networking
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/pi/Installers/mbotsetup/setup_from_mbot_config.py
+WorkingDirectory=/home/pi/Installers/
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+

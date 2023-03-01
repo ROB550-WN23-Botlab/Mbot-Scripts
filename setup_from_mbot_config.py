@@ -53,11 +53,13 @@ with open(log_file, "a") as log:
         log.write("Connected to a WiFi network... Done.")
     else:
         available_networks = []
+        known_networks = []
         scan_output = os.popen("sudo nmcli dev wifi list").read().split('\n')
         for line in scan_output:
             if len(line.strip()) > 0 and not line.startswith("IN-USE"):
                 available_networks.append(line.strip().split()[0])
                 log.write(line.strip().split()[0])
+        
         home_wifi_exists = False
         if home_wifi_ssid in available_networks:
             # Set up home WiFi connection  
@@ -79,14 +81,14 @@ with open(log_file, "a") as log:
                     ap_exists = True
                     break
 
-            if not ap_exists:
-                # Configure Network Manager to create a WiFi access point
-                os.system(f"sudo nmcli connection add type wifi ifname '*' con-name mbot_wifi_ap autoconnect no ssid {ap_ssid}")
-                os.system("sudo nmcli connection modify mbot_wifi_ap 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared")
-                os.system(f"sudo nmcli connection modify mbot_wifi_ap wifi-sec.key-mgmt wpa-psk wifi-sec.psk {ap_password}")
-                os.system("sudo nmcli connection modify mbot_wifi_ap ipv4.address 192.168.1.1/24 ipv4.dns '8.8.8.8 8.8.4.4'")
-                time.sleep(10.0)
-                os.system("sudo nmcli connection up mbot_wifi_ap")
-                log.write("Access point created successfully.")
-            else:
-                log.write("Access point already exists, not created.")
+        if not ap_exists:
+            # Configure Network Manager to create a WiFi access point
+            os.system(f"sudo nmcli connection add type wifi ifname '*' con-name mbot_wifi_ap autoconnect no ssid {ap_ssid}")
+            os.system("sudo nmcli connection modify mbot_wifi_ap 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared")
+            os.system(f"sudo nmcli connection modify mbot_wifi_ap wifi-sec.key-mgmt wpa-psk wifi-sec.psk {ap_password}")
+            os.system("sudo nmcli connection modify mbot_wifi_ap ipv4.address 192.168.1.1/24 ipv4.dns '8.8.8.8 8.8.4.4'")
+            time.sleep(10.0)
+            os.system("sudo nmcli connection up mbot_wifi_ap")
+            print("Access point created successfully.")
+        else:
+            print("Access point already exists, not created.")
