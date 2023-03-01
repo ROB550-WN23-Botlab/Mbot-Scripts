@@ -50,15 +50,18 @@ with open(log_file, "a") as log:
 
     if wifi_active:
         # Already connected to  WiFi network
-        log.write("Connected to a WiFi network... Done.\n")
+        log.write(f"Connected to WiFi network '{name}'. Done.\n")
     else:
+        # We don't have a wifi network, check for ones we know
         available_networks = []
         known_networks = []
         scan_output = os.popen("sudo nmcli dev wifi list").read().split('\n')
         for line in scan_output:
             if len(line.strip()) > 0 and not line.startswith("IN-USE"):
-                available_networks.append(line.strip().split()[0])
-                log.write(line.strip().split()[0])
+                ssid = line.strip().split()[1]
+                if ssid not in availabe_networks:
+                    available_networks.append(ssid)
+        log.write(available_networks)
         
         home_wifi_exists = False
         if home_wifi_ssid in available_networks:
@@ -72,7 +75,8 @@ with open(log_file, "a") as log:
         if home_wifi_exists:
             # Connect to home WiFi network
             os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
-            log.write(f"Connected to home WiFi network '{home_wifi_ssid}' \n")
+            log.write(f"Connected to WiFi network '{home_wifi_ssid}'. Done.\n")
+            break
         else:
             # Check if the access point already exists
             ap_exists = False
