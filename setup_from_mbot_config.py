@@ -66,7 +66,7 @@ with open(log_file, "a") as log:
                 ssid = line.strip().split()[1]
                 if ssid not in available_networks:
                     available_networks.append(ssid)
-        log.write(available_networks)
+                    log.write(ssid)
         
         home_wifi_exists = False
         if home_wifi_ssid in available_networks:
