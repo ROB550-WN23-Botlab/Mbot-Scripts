@@ -1,0 +1,3 @@
+[submodule "mbot-ip"]
+	path = mbot-ip
+	url = https://gitlab.eecs.umich.edu/rob550-w23/mbot-ip.git
