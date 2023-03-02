@@ -18,10 +18,10 @@ wait_for_ip() {
 
 HOSTNAME=$(hostname)
 IP=$(hostname -I | awk '{print $1}')
-LOG_PATH="/home/pi/startup_scripts/log"
-LOG="$LOG_PATH/update_ip.log"
+LOG_PATH="/home/pi/mbot_scripts/log"
+LOG="$LOG_PATH/mbot_publish_info.log"
 GIT_USER="pi"
-GIT_TOKEN=$(</home/pi/startup_scripts/token.txt)
+GIT_TOKEN=$(</home/pi/mbot_scripts/token.txt)
 TIMEOUT=30
 
 date > $LOG
@@ -32,7 +32,7 @@ if [ -z $IP ]; then
 fi
 echo "IP= $IP" &>> $LOG
 
-GIT_PATH="/home/pi/startup_scripts/mbot-ip"
+GIT_PATH="/home/pi/mbot_scripts/mbot-ip"
 git -C $GIT_PATH config --local user.email ""
 git -C $GIT_PATH config --local user.name "pi"
 #git config pull.rebase false
@@ -41,10 +41,10 @@ git -C $GIT_PATH pull https://$GIT_USER:$GIT_TOKEN@gitlab.eecs.umich.edu/rob550-
 echo "Calling python script" &>> $LOG
 python3 $GIT_PATH/main.py -hostname $HOSTNAME -ip $IP -log $LOG
 echo "Adding..." &>> $LOG
-git -C $GIT_PATH add data/$HOSTNAME.json &>> $LOG
+git -C $GIT_PATH/ add data/$HOSTNAME.json &>> $LOG
 echo "Committing..." &>> $LOG
-git -C $GIT_PATH commit -m "Auto update $HOSTNAME IP" &>> $LOG
+git -C $GIT_PATH/ commit -m "Auto update $HOSTNAME IP" &>> $LOG
 echo "Pushing..." &>> $LOG
-git -C $GIT_PATH push https://$GIT_USER:$GIT_TOKEN@gitlab.eecs.umich.edu/rob550-w23/mbot-ip.git &>> $LOG
+git -C $GIT_PATH/ push https://$GIT_USER:$GIT_TOKEN@gitlab.eecs.umich.edu/rob550-w23/mbot-ip.git &>> $LOG
 echo "Done!" &>> $LOG
 exit 0

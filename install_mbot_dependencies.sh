@@ -68,4 +68,8 @@ cd pico-sdk
 git submodule --init
 cd /home/$user
 
+wget https://download.nomachine.com/download/8.4/Arm/nomachine_8.4.2_1_arm64.deb
+sudo dpkg -i nomachine_8.4.2_1_arm64.deb
+rm nomachine_8.4.2_1_arm64.deb
+
 echo "Done Installing!"

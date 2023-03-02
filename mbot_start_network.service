@@ -1,0 +1,14 @@
+[Unit]
+Description=Start MBot Networking
+After=multi-user.target
+
+[Service]
+PIDFile = /run/mbot_start_net.pid
+ExecStart=/home/pi/Installers/mbotsetup/mbot_start_networking.py --PIDFile /run/mbot_start_net.pid
+WorkingDirectory=/home/pi/Installers/
+Restart=never
+User=root
+
+[Install]
+WantedBy=graphical.target
+

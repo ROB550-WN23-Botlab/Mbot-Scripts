@@ -6,7 +6,7 @@ import datetime
 config_file = "/boot/firmware/mbot_config.txt"
 
 # Define the path to the log file
-log_file = "/var/log/mbot_config.log"
+log_file = "/home/mbot_scripts/log/mbot_start_networking.log"
 
 host= 'google.com'
 
@@ -58,21 +58,7 @@ with open(log_file, "a") as log:
     if wifi_active:
         # Already connected to  WiFi network
         log.write(f"Connected to active WiFi network '{name}'. Done.\n")
-        tries = 0
-        while True:
-            ping = os.popen(f'ping -c 1 {host}')
-            ret = ping.read()
-            ping.close()
-            if '1 received' in ret:
-                log.write("ping recieved... updating IP Listing\n")      
-                os.popen("bash /home/pi/Installers/update_IP.sh")
-                break
-            else:
-                log.write("ping failed... trying again\n")
-                time.sleep(5)
-                tries += 1
-                if tries > 48:
-                    break
+
     else:
         # We don't have a wifi network, check for ones we know
         available_networks = []
@@ -83,7 +69,7 @@ with open(log_file, "a") as log:
         signal = []
         log.write(f"Looking for home network '{home_wifi_ssid}'\n")
         log.write("Wifi Scan: ")
-        scan_output = os.popen("sudo nmcli dev wifi list").read().split('\n')
+        scan_output = os.popen("nmcli dev wifi list").read().split('\n')
         for line in scan_output:
             if len(line.strip()) > 0 and not line.startswith("IN-USE"):
                 if line.strip().split()[1] == home_wifi_ssid:
@@ -108,26 +94,10 @@ with open(log_file, "a") as log:
             if home_wifi_ssid not in known_networks:
                 home_wifi_bssid = sorted_avail[0][0]
                 # Connect to home WiFi network
-                os.system(f"sudo nmcli dev wifi connect '{home_wifi_bssid}' password '{home_wifi_password}'")
+                os.system(f"nmcli dev wifi connect '{home_wifi_bssid}' password '{home_wifi_password}'")
             else:
-                os.system(f"sudo nmcli connection up '{home_wifi_ssid}'")
+                os.system(f"nmcli connection up '{home_wifi_ssid}'")
             log.write(f"Started connection to WiFi network '{home_wifi_ssid}'. Done.\n")
-            tries = 0
-            while True:
-                ping = os.popen(f'ping -c 1 {host}')
-                ret = ping.read()
-                print(ret)
-                ping.close()
-                if '1 received' in ret: 
-                    log.write("ping recieved... updating IP Listing\n")       
-                    os.popen("bash /home/pi/Installers/update_IP.sh")
-                    break
-                else:
-                    time.sleep(5)
-                    log.write("ping failed... trying again\n")
-                    tries += 1
-                    if tries > 48:
-                        break
             
         else:
             log.write("No networks found, starting Access Point\n")
@@ -138,11 +108,11 @@ with open(log_file, "a") as log:
                     os.system(f"nmcli connection delete mbot_wifi_ap")
                     break
             # Configure Network Manager to create a WiFi access point
-            os.system(f"sudo nmcli connection add type wifi ifname '*' con-name mbot_wifi_ap autoconnect no ssid {ap_ssid}")
-            os.system("sudo nmcli connection modify mbot_wifi_ap 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared")
-            os.system(f"sudo nmcli connection modify mbot_wifi_ap wifi-sec.key-mgmt wpa-psk wifi-sec.psk {ap_password}")
-            os.system("sudo nmcli connection modify mbot_wifi_ap ipv4.address 192.168.1.1/24 ipv4.dns '8.8.8.8 8.8.4.4'")
+            os.system(f"nmcli connection add type wifi ifname '*' con-name mbot_wifi_ap autoconnect no ssid {ap_ssid}")
+            os.system("nmcli connection modify mbot_wifi_ap 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared")
+            os.system(f"nmcli connection modify mbot_wifi_ap wifi-sec.key-mgmt wpa-psk wifi-sec.psk {ap_password}")
+            os.system("nmcli connection modify mbot_wifi_ap ipv4.address 192.168.1.1/24 ipv4.dns '8.8.8.8 8.8.4.4'")
             log.write("Access point created successfully. \n")
             time.sleep(10.0)
-            os.system("sudo nmcli connection up mbot_wifi_ap")
+            os.system("nmcli connection up mbot_wifi_ap")
             log.write("Access point started successfully. \n")
