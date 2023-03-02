@@ -8,6 +8,8 @@ config_file = "/boot/firmware/mbot_config.txt"
 # Define the path to the log file
 log_file = "/var/log/mbot_config.log"
 
+host= 'google.com'
+
 with open(log_file, "a") as log:
     current_time = datetime.datetime.now()
     formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -55,35 +57,77 @@ with open(log_file, "a") as log:
 
     if wifi_active:
         # Already connected to  WiFi network
-        log.write(f"Connected to WiFi network '{name}'. Done.\n")
-        os.system("/home/pi/Installers/update_IP.sh")
+        log.write(f"Connected to active WiFi network '{name}'. Done.\n")
+        tries = 0
+        while True:
+            ping = os.popen(f'ping -c 1 {host}')
+            ret = ping.read()
+            ping.close()
+            if '1 received' in ret:
+                log.write("ping recieved... updating IP Listing\n")      
+                os.popen("bash /home/pi/Installers/update_IP.sh")
+                break
+            else:
+                log.write("ping failed... trying again\n")
+                time.sleep(5)
+                tries += 1
+                if tries > 48:
+                    break
     else:
         # We don't have a wifi network, check for ones we know
         available_networks = []
+        known_networks = []
+        bssid = []
+        ssid = []
+        channel = []
+        signal = []
         log.write(f"Looking for home network '{home_wifi_ssid}'\n")
         log.write("Wifi Scan: ")
         scan_output = os.popen("sudo nmcli dev wifi list").read().split('\n')
         for line in scan_output:
             if len(line.strip()) > 0 and not line.startswith("IN-USE"):
-                ssid = line.strip().split()[1]
-                if ssid not in available_networks:
-                    available_networks.append(ssid)
-                    log.write(f"{ssid}, ")
+                if line.strip().split()[1] == home_wifi_ssid:
+                    bssid.append(line.strip().split()[0])
+                    ssid.append(line.strip().split()[1])
+                    channel.append(line.strip().split()[3])
+                    signal.append(line.strip().split()[6])
+                    log.write(f"{line}\n")            
         log.write("\n")
-        
-        home_wifi_exists = False
-        if home_wifi_ssid in available_networks:
+        available = list(zip(bssid, ssid, channel, signal))
+        sorted_avail = sorted(available, key=lambda x: (int(x[2]), int(x[3])), reverse=True)
+        print(sorted_avail)
+        if home_wifi_ssid in ssid:
             # Check if we've already added the home network 
             for line in os.popen("nmcli connection show").readlines():
-                log.write(f"{line}, ")
-                if home_wifi_ssid in line:
-                    home_wifi_exists = True
+                ssid = line.strip().split()[0]
+                log.write(f"{ssid}, ")
+                if ssid not in known_networks:
+                    known_networks.append(ssid)
+                    log.write(f"{ssid}, ")
             log.write("\n")
-        if home_wifi_exists:
-            # Connect to home WiFi network
-            os.system(f"sudo nmcli connection up '{home_wifi_ssid}' password '{home_wifi_password}'")
-            os.system("/home/pi/Installers/update_IP.sh")
+            if home_wifi_ssid not in known_networks:
+                home_wifi_bssid = sorted_avail[0][0]
+                # Connect to home WiFi network
+                os.system(f"sudo nmcli dev wifi connect '{home_wifi_bssid}' password '{home_wifi_password}'")
+            else:
+                os.system(f"sudo nmcli connection up '{home_wifi_ssid}'")
             log.write(f"Started connection to WiFi network '{home_wifi_ssid}'. Done.\n")
+            tries = 0
+            while True:
+                ping = os.popen(f'ping -c 1 {host}')
+                ret = ping.read()
+                print(ret)
+                ping.close()
+                if '1 received' in ret: 
+                    log.write("ping recieved... updating IP Listing\n")       
+                    os.popen("bash /home/pi/Installers/update_IP.sh")
+                    break
+                else:
+                    time.sleep(5)
+                    log.write("ping failed... trying again\n")
+                    tries += 1
+                    if tries > 48:
+                        break
             
         else:
             log.write("No networks found, starting Access Point\n")

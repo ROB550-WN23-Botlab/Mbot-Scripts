@@ -32,19 +32,19 @@ if [ -z $IP ]; then
 fi
 echo "IP= $IP" &>> $LOG
 
-cd /home/pi/startup_scripts/mbot-ip
-git config --local user.email ""
-git config --local user.name "pi"
+GIT_PATH="/home/pi/startup_scripts/mbot-ip"
+git -C $GIT_PATH config --local user.email ""
+git -C $GIT_PATH config --local user.name "pi"
 #git config pull.rebase false
-git pull https://$GIT_USER:$GIT_TOKEN@gitlab.eecs.umich.edu/rob550-w23/mbot-ip.git &>> $LOG
+git -C $GIT_PATH pull https://$GIT_USER:$GIT_TOKEN@gitlab.eecs.umich.edu/rob550-w23/mbot-ip.git &>> $LOG
 
 echo "Calling python script" &>> $LOG
-python3 main.py -hostname $HOSTNAME -ip $IP -log $LOG
+python3 $GIT_PATH/main.py -hostname $HOSTNAME -ip $IP -log $LOG
 echo "Adding..." &>> $LOG
-git add data/$HOSTNAME.json &>> $LOG
+git -C $GIT_PATH add data/$HOSTNAME.json &>> $LOG
 echo "Committing..." &>> $LOG
-git commit -m "Auto update $HOSTNAME IP" &>> $LOG
+git -C $GIT_PATH commit -m "Auto update $HOSTNAME IP" &>> $LOG
 echo "Pushing..." &>> $LOG
-git push https://$GIT_USER:$GIT_TOKEN@gitlab.eecs.umich.edu/rob550-w23/mbot-ip.git &>> $LOG
+git -C $GIT_PATH push https://$GIT_USER:$GIT_TOKEN@gitlab.eecs.umich.edu/rob550-w23/mbot-ip.git &>> $LOG
 echo "Done!" &>> $LOG
 exit 0
