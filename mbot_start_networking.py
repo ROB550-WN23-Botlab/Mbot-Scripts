@@ -6,7 +6,7 @@ import datetime
 config_file = "/boot/firmware/mbot_config.txt"
 
 # Define the path to the log file
-log_file = "/home/mbot_scripts/log/mbot_start_networking.log"
+log_file = "/home/pi/mbot_scripts/log/mbot_start_networking.log"
 
 host= 'google.com'
 
