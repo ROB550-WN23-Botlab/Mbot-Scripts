@@ -1,4 +1,4 @@
 #!/usr/bin/bash
-sudo cp mbot_startup.service /etc/systemd/system/mbot_startup.service
-sudo cp mbot_ip_git.service /etc/systemd/system/mbot_ip_git.service
+sudo cp mbot_start_network.service /etc/systemd/system/mbot_start_network.service
+sudo cp mbot_publish_info.service /etc/systemd/system/mbot_publish_info.service
 sudo systemctl daemon-reload
