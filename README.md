@@ -22,6 +22,12 @@ $ git checkout master
 $ sudo ./install_mbot_services.sh
 ```
 
+Then, update `mbot_config.txt` with your relevant information:
+1. The `mbot_hostname` is `mbot-XXX`, which should be determined by the number on the robot
+2. The `mbot_ap_password` field is what you will enter as the password to the AP if needed
+3. The `home_wifi_ssid` field is your home network name (i.e. what what would appear on the list of available networks).
+4. The `home_wifi_password` field is the password to your home network. Make sure not to push your changes if you update this!!!
+
 You can additionally install the server for remote desktoping into the Pi by installing NoMachine:
 ```
 $ sudo ./install_nomachine.sh
