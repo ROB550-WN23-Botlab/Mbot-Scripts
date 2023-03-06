@@ -1,0 +1,4 @@
+mbot_hostname=mbot-000
+mbot_ap_password=iloverobots
+home_wifi_ssid=HomeWifiSSID
+home_wifi_password=HomeWifiPass
