@@ -25,6 +25,7 @@ with open(log_file, "a") as log:
                 hostname = value
             elif key == "mbot_ap_ssid":
                 ap_ssid = value
+                ssid_set_from_cfg = True
             elif key == "mbot_ap_password":
                 ap_password = value
             elif key == "home_wifi_ssid":
@@ -107,9 +108,11 @@ with open(log_file, "a") as log:
                     log.write("Access point already exists, removing... \n")
                     os.system(f"nmcli connection delete mbot_wifi_ap")
                     break
+            if not ssid_set_from_cfg:
+                ap_ssid = str(f"{hostname}-AP")
             # Configure Network Manager to create a WiFi access point
             os.system(f"nmcli connection add type wifi ifname '*' con-name mbot_wifi_ap autoconnect no ssid {ap_ssid}")
-            os.system("nmcli connection modify mbot_wifi_ap 802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared")
+            os.system("nmcli connection modify mbot_wifi_ap 802-11-wireless.mode ap 802-11-wireless.band a ipv4.method shared")
             os.system(f"nmcli connection modify mbot_wifi_ap wifi-sec.key-mgmt wpa-psk wifi-sec.psk {ap_password}")
             os.system("nmcli connection modify mbot_wifi_ap ipv4.address 192.168.1.1/24 ipv4.dns '8.8.8.8 8.8.4.4'")
             log.write("Access point created successfully. \n")
