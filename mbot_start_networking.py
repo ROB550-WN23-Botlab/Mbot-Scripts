@@ -8,8 +8,8 @@ config_file = "/boot/firmware/mbot_config.txt"
 # Define the path to the log file
 log_file = "/home/pi/mbot_scripts/log/mbot_start_networking.log"
 
-host= 'google.com'
 
+ssid_set_from_cfg = False
 with open(log_file, "a") as log:
     current_time = datetime.datetime.now()
     formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
