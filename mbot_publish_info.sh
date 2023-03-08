@@ -24,6 +24,13 @@ GIT_USER="pi"
 GIT_TOKEN=$(</home/pi/mbot_scripts/token.txt)
 TIMEOUT=30
 
+if [ -d $LOG_PATH ]
+then 
+    echo "Log directory exists, nice."
+else
+    mkdir $LOG_PATH
+fi
+
 date > $LOG
 echo "Updating IP" &>> $LOG
 echo "Hostname= $HOSTNAME" &>> $LOG
@@ -37,7 +44,6 @@ git -C $GIT_PATH config --local user.email ""
 git -C $GIT_PATH config --local user.name "pi"
 #git config pull.rebase false
 git -C $GIT_PATH pull https://$GIT_USER:$GIT_TOKEN@gitlab.eecs.umich.edu/rob550-w23/mbot-ip.git &>> $LOG
-
 echo "Calling python script" &>> $LOG
 python3 $GIT_PATH/main.py -hostname $HOSTNAME -ip $IP -log $LOG
 echo "Adding..." &>> $LOG
